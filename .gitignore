@@ -1,0 +1,9 @@
+.vs
+.vsconfig
+Logs
+Library
+obj
+Temp
+UserSettings
+Assembly-CSharp.csproj
+Chess.sln
