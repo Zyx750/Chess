@@ -193,6 +193,7 @@ namespace Chess.Game
             //Increment total game moves and change player to move
             if (!whiteToMove) fullMoves++;
             whiteToMove = !whiteToMove;
+            draw = false;
 
             stateHistory.Push(currentGameState);
 

@@ -675,7 +675,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   boardUIObject: {fileID: 786712752}
   whitePlayerHuman: 1
-  blackPlayerHuman: 1
+  blackPlayerHuman: 0
 --- !u!4 &2051503309
 Transform:
   m_ObjectHideFlags: 0

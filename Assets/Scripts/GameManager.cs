@@ -30,7 +30,11 @@ namespace Chess.Game
             boardUI.DrawBoard();
             boardUI.DrawPieces(board);
 
-            if(!whitePlayerHuman || !blackPlayerHuman) bot = new ChessAI();
+            if (!whitePlayerHuman || !blackPlayerHuman)
+            {
+                bot = gameObject.AddComponent(typeof(ChessAI)) as ChessAI;
+                bot.Init(board, MakeMove);
+            }
 
             List<Move> moves = generator.GenerateMoves(board);
             PrepareForMove(moves);
@@ -68,8 +72,7 @@ namespace Chess.Game
 
             if((board.whiteToMove && !whitePlayerHuman) || (!board.whiteToMove && !blackPlayerHuman))
             {
-                Move move = bot.ChooseMove(board);
-                MakeMove(move);
+                bot.ChooseMove(true);
             }
         }
 

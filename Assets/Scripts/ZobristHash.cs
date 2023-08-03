@@ -5,7 +5,7 @@ namespace Chess
 {
     static public class ZobristHash
     {
-        static readonly Random rnd = new Random();
+        static readonly Random rnd = new();
         static readonly ulong[,] pieceBitstrings;
         static readonly ulong blackToMove;
         static readonly ulong[] castlingRights;
