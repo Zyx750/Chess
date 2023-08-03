@@ -46,15 +46,15 @@ namespace Chess.Game
             foreach (int index in pieces)
             {
                 int piece = board[index];
-                int startIndex = (Pieces.Type(piece) == Pieces.bishop) ? 4 : 0;
-                int endIndex = (Pieces.Type(piece) == Pieces.rook) ? 4 : 8;
+                int startIndex = (Piece.Type(piece) == Piece.bishop) ? 4 : 0;
+                int endIndex = (Piece.Type(piece) == Piece.rook) ? 4 : 8;
                 GenerateSlidingPieceMoves(startIndex, endIndex, index);
             }
         }
 
         void GenerateSlidingPieceMoves(int startIndex, int endIndex, int index)
         {
-            int friendly = (board.whiteToMove) ? Pieces.white : Pieces.black;
+            int friendly = (board.whiteToMove) ? Piece.white : Piece.black;
             if(pins.ContainsKey(index))
             {
                 if (pins[index] < startIndex) return;
@@ -76,10 +76,10 @@ namespace Chess.Game
                 {
                     int target = index + dist * directions[dir];
                     int targetPiece = board[target];
-                    if (Pieces.Color(targetPiece) == friendly) break;
+                    if (Piece.Color(targetPiece) == friendly) break;
                     Move move = new(index, target);
                     moves.Add(move);
-                    if (targetPiece != Pieces.none) break;
+                    if (targetPiece != Piece.none) break;
                 }
             }
         }
@@ -87,13 +87,13 @@ namespace Chess.Game
         void GenerateKnightMoves()
         {
             List<int> pieces = (board.whiteToMove) ? board.whiteKnights : board.blackKnights;
-            int friendly = (board.whiteToMove) ? Pieces.white : Pieces.black;
+            int friendly = (board.whiteToMove) ? Piece.white : Piece.black;
             foreach (int index in pieces)
             {
                 if (pins.ContainsKey(index)) continue;
                 foreach (int target in knightMoves[index])
                 {
-                    if (Pieces.Color(board[target]) != friendly)
+                    if (Piece.Color(board[target]) != friendly)
                     {
                         Move move = new(index, target);
                         moves.Add(move);
@@ -111,14 +111,14 @@ namespace Chess.Game
             if(board.whiteToMove)
             {
                 pieces = board.whitePawns;
-                enemy = Pieces.black;
+                enemy = Piece.black;
                 dir = -1;
                 startRow = 1;
             }
             else
             {
                 pieces = board.blackPawns;
-                enemy = Pieces.white;
+                enemy = Piece.white;
                 dir = 1;
                 startRow = 6;
             }
@@ -128,13 +128,13 @@ namespace Chess.Game
                 int target = index + 8*dir;
                 if (!pins.ContainsKey(index) || pins[index] < 2)
                 {
-                    if (board[target] == Pieces.none)
+                    if (board[target] == Piece.none)
                     {
                         AddPawnMove(index, target);
 
                         if (Coord.Row(index) == startRow)
                         {
-                            if (board[target+8*dir] == Pieces.none)
+                            if (board[target+8*dir] == Piece.none)
                             {
                                 Move move = new(index, target + 8 * dir, Move.Flag.doubleMove);
                                 moves.Add(move);
@@ -149,11 +149,11 @@ namespace Chess.Game
                     if (pins.ContainsKey(index) && (Math.Abs(directions[pins[index]]) != Math.Abs(capTarget - index))) continue;
                     if (capTarget < 0 || capTarget > 63) continue;
                     if (Coord.KingDistance(index, capTarget) > 1) continue;
-                    if (Pieces.Color(board[capTarget]) == enemy)
+                    if (Piece.Color(board[capTarget]) == enemy)
                     {
                         AddPawnMove(index, capTarget);
                     }
-                    else if (capTarget == board.enPassantTarget && board[capTarget] == Pieces.none)
+                    else if (capTarget == board.enPassantTarget && board[capTarget] == Piece.none)
                     {
                         if (epPin == index) continue;
                         Move move = new(index, capTarget, Move.Flag.enPassant);
@@ -183,13 +183,13 @@ namespace Chess.Game
         void GenerateKingMoves()
         {
             int index = (board.whiteToMove) ? board.whiteKing : board.blackKing;
-            int friendly = (board.whiteToMove) ? Pieces.white : Pieces.black;
+            int friendly = (board.whiteToMove) ? Piece.white : Piece.black;
             foreach (int dir in kingVectors)
             {
                 int target = index + dir;
                 if (target < 0 || target > 63 || threat.Contains(target) || Coord.KingDistance(index, target) > 1) continue;
                 int targetPiece = board[target];
-                if (Pieces.Color(targetPiece) == friendly) continue;
+                if (Piece.Color(targetPiece) == friendly) continue;
                 Move move = new(index, target);
                 moves.Add(move);
             }
@@ -315,16 +315,16 @@ namespace Chess.Game
             foreach (int index in pieces)
             {
                 int piece = board[index];
-                int startIndex = (Pieces.Type(piece) == Pieces.bishop) ? 4 : 0;
-                int endIndex = (Pieces.Type(piece) == Pieces.rook) ? 4 : 8;
+                int startIndex = (Piece.Type(piece) == Piece.bishop) ? 4 : 0;
+                int endIndex = (Piece.Type(piece) == Piece.rook) ? 4 : 8;
                 GenerateSlidingPieceThreat(startIndex, endIndex, index);
             }
         }
 
         void GenerateSlidingPieceThreat(int startIndex, int endIndex, int index)
         {
-            int friendly = (board.whiteToMove) ? Pieces.white : Pieces.black;
-            int enemy = (!board.whiteToMove) ? Pieces.white : Pieces.black;
+            int friendly = (board.whiteToMove) ? Piece.white : Piece.black;
+            int enemy = (!board.whiteToMove) ? Piece.white : Piece.black;
             int king = (board.whiteToMove) ? board.whiteKing : board.blackKing;
             for (int dir = startIndex; dir < endIndex; dir++)
             {
@@ -334,7 +334,7 @@ namespace Chess.Game
                 {
                     int target = index + dist * directions[dir];
                     int targetPiece = board[target];
-                    if (Pieces.Color(targetPiece) == friendly)
+                    if (Piece.Color(targetPiece) == friendly)
                     {
                         if(pinned == -1)
                         {
@@ -375,9 +375,9 @@ namespace Chess.Game
                     }
                     passedSquares.Add(target);
                     if (pinned == -1) threat.Add(target);
-                    if(Pieces.Color(targetPiece) == enemy)
+                    if(Piece.Color(targetPiece) == enemy)
                     {
-                        if(Pieces.Type(targetPiece) == Pieces.pawn && (target - 8 == board.enPassantTarget || target + 8 == board.enPassantTarget))
+                        if(Piece.Type(targetPiece) == Piece.pawn && (target - 8 == board.enPassantTarget || target + 8 == board.enPassantTarget))
                         {
                             int targetPawn;
                             if (pinned == -1)
@@ -389,7 +389,7 @@ namespace Chess.Game
                             {
                                 targetPawn = target - directions[dir];
                             }
-                            if (Pieces.Type(board[targetPawn]) != Pieces.pawn || Pieces.Color(board[targetPawn]) != friendly) break;
+                            if (Piece.Type(board[targetPawn]) != Piece.pawn || Piece.Color(board[targetPawn]) != friendly) break;
                             for (int d = dist+1; d <= squaresToEdge[index][dir]; d++)
                             {
                                 target = index + d * directions[dir];

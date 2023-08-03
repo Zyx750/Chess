@@ -28,7 +28,7 @@ namespace Chess.UI
         public void AddFlag(int flag)
         {
             Move moveWithFlag = new(move, flag);
-            Piece piece = transform.parent.GetComponent<Piece>();
+            PieceUI piece = transform.parent.GetComponent<PieceUI>();
             piece.ChangeType(flag - 2);
 
             GameObject manager = GameObject.Find("GameManager");

@@ -61,17 +61,17 @@ namespace Chess.UI
                         Vector2 pos = new(col + 0.5f, 7 - row + 0.5f);
                         pos += (Vector2)transform.position;
                         GameObject newPiece = Instantiate(piecePrefab, pos, Quaternion.identity, transform);
-                        newPiece.name = Pieces.ColorString(piece) + Pieces.TypeString(piece);
+                        newPiece.name = Piece.ColorString(piece) + Piece.TypeString(piece);
 
-                        int spriteID = Pieces.Type(piece) - 1;
-                        if (!Pieces.IsWhite(piece)) spriteID += 6;
+                        int spriteID = Piece.Type(piece) - 1;
+                        if (!Piece.IsWhite(piece)) spriteID += 6;
                         newPiece.GetComponent<Image>().sprite = pieces[spriteID];
 
-                        newPiece.GetComponent<Piece>().tile = tiles[index];
+                        newPiece.GetComponent<PieceUI>().tile = tiles[index];
                         tiles[index].GetComponent<Tile>().piece = newPiece;
-                        newPiece.GetComponent<Piece>().piece = piece;
+                        newPiece.GetComponent<PieceUI>().piece = piece;
 
-                        if(Pieces.Color(piece) == Pieces.white)
+                        if(Piece.Color(piece) == Piece.white)
                         {
                             whitePieces.Add(newPiece);
                         }
@@ -158,7 +158,7 @@ namespace Chess.UI
         {
             GameObject piece = tiles[index].GetComponent<Tile>().piece;
             tiles[index].GetComponent<Tile>().piece = null;
-            if (Pieces.Color(piece.GetComponent<Piece>().piece) == Pieces.white)
+            if (Piece.Color(piece.GetComponent<PieceUI>().piece) == Piece.white)
             {
                 whitePieces.Remove(piece);
             }
@@ -176,7 +176,7 @@ namespace Chess.UI
 
             tiles[to].GetComponent<Tile>().piece = piece;
             piece.transform.position = tiles[to].transform.position;
-            piece.GetComponent<Piece>().tile = tiles[to];
+            piece.GetComponent<PieceUI>().tile = tiles[to];
         }
     }
 }

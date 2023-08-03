@@ -57,7 +57,7 @@ namespace Chess.Game
             currentGameState = 0;   
 
             //Count half-moves for fifty move rule
-            if (board[move.Target] != 0 || Pieces.Type(board[move.Start]) == Pieces.pawn)
+            if (board[move.Target] != 0 || Piece.Type(board[move.Start]) == Piece.pawn)
             {
                 halfMovesSinceCaptureOrPawnMove = 0;
                 hashHistory.Clear();
@@ -86,7 +86,7 @@ namespace Chess.Game
             //Move piece or move and promote pawn
             if (move.MoveFlag > 3)
             {
-                int color = Pieces.Color(board[move.Start]);
+                int color = Piece.Color(board[move.Start]);
                 RemovePiece(move.Start);
                 board[move.Start] = 0;
 
@@ -206,16 +206,16 @@ namespace Chess.Game
             if(hashHistory.Count > 0)
             {
                 hashHistory.RemoveAt(hashHistory.Count - 1);
-                zobristHash = hashHistory[hashHistory.Count-1];
+                if(hashHistory.Count > 0) zobristHash = hashHistory[hashHistory.Count-1];
             }
 
             whiteToMove = !whiteToMove;
-            int color = (whiteToMove) ? Pieces.white : Pieces.black;
+            int color = (whiteToMove) ? Piece.white : Piece.black;
             if (!whiteToMove) fullMoves--;
 
             if(move.MoveFlag > 3) //if move was a promotion, undo promotion and move pawn back
             {
-                board[move.Start] = Pieces.pawn | color;
+                board[move.Start] = Piece.pawn | color;
                 AddPiece(move.Start);
 
                 RemovePiece(move.Target);
@@ -290,38 +290,38 @@ namespace Chess.Game
         {
             switch (board[from])
             {
-                case Pieces.queen | Pieces.white:
-                case Pieces.bishop | Pieces.white:
-                case Pieces.rook | Pieces.white:
+                case Piece.queen | Piece.white:
+                case Piece.bishop | Piece.white:
+                case Piece.rook | Piece.white:
                     whiteSlidingPieces.Remove(from);
                     whiteSlidingPieces.Add(to);
                     break;
-                case Pieces.knight | Pieces.white:
+                case Piece.knight | Piece.white:
                     whiteKnights.Remove(from);
                     whiteKnights.Add(to);
                     break;
-                case Pieces.pawn | Pieces.white:
+                case Piece.pawn | Piece.white:
                     whitePawns.Remove(from);
                     whitePawns.Add(to);
                     break;
-                case Pieces.king | Pieces.white:
+                case Piece.king | Piece.white:
                     whiteKing = to;
                     break;
-                case Pieces.queen | Pieces.black:
-                case Pieces.bishop | Pieces.black:
-                case Pieces.rook | Pieces.black:
+                case Piece.queen | Piece.black:
+                case Piece.bishop | Piece.black:
+                case Piece.rook | Piece.black:
                     blackSlidingPieces.Remove(from);
                     blackSlidingPieces.Add(to);
                     break;
-                case Pieces.knight | Pieces.black:
+                case Piece.knight | Piece.black:
                     blackKnights.Remove(from);
                     blackKnights.Add(to);
                     break;
-                case Pieces.pawn | Pieces.black:
+                case Piece.pawn | Piece.black:
                     blackPawns.Remove(from);
                     blackPawns.Add(to);
                     break;
-                case Pieces.king | Pieces.black:
+                case Piece.king | Piece.black:
                     blackKing = to;
                     break;
             }
@@ -335,26 +335,26 @@ namespace Chess.Game
             if (board[index] == 0) return;
             switch(board[index])
             {
-                case Pieces.queen | Pieces.white:
-                case Pieces.bishop | Pieces.white:
-                case Pieces.rook | Pieces.white:
+                case Piece.queen | Piece.white:
+                case Piece.bishop | Piece.white:
+                case Piece.rook | Piece.white:
                     whiteSlidingPieces.Remove(index);
                     return;
-                case Pieces.knight | Pieces.white:
+                case Piece.knight | Piece.white:
                     whiteKnights.Remove(index);
                     return;
-                case Pieces.pawn | Pieces.white:
+                case Piece.pawn | Piece.white:
                     whitePawns.Remove(index);
                     return;
-                case Pieces.queen | Pieces.black:
-                case Pieces.bishop | Pieces.black:
-                case Pieces.rook | Pieces.black:
+                case Piece.queen | Piece.black:
+                case Piece.bishop | Piece.black:
+                case Piece.rook | Piece.black:
                     blackSlidingPieces.Remove(index);
                     return;
-                case Pieces.knight | Pieces.black:
+                case Piece.knight | Piece.black:
                     blackKnights.Remove(index);
                     return;
-                case Pieces.pawn | Pieces.black:
+                case Piece.pawn | Piece.black:
                     blackPawns.Remove(index);
                     return;
             }
@@ -365,26 +365,26 @@ namespace Chess.Game
             if (board[index] == 0) return;
             switch (board[index])
             {
-                case Pieces.queen | Pieces.white:
-                case Pieces.bishop | Pieces.white:
-                case Pieces.rook | Pieces.white:
+                case Piece.queen | Piece.white:
+                case Piece.bishop | Piece.white:
+                case Piece.rook | Piece.white:
                     whiteSlidingPieces.Add(index);
                     return;
-                case Pieces.knight | Pieces.white:
+                case Piece.knight | Piece.white:
                     whiteKnights.Add(index);
                     return;
-                case Pieces.pawn | Pieces.white:
+                case Piece.pawn | Piece.white:
                     whitePawns.Add(index);
                     return;
-                case Pieces.queen | Pieces.black:
-                case Pieces.bishop | Pieces.black:
-                case Pieces.rook | Pieces.black:
+                case Piece.queen | Piece.black:
+                case Piece.bishop | Piece.black:
+                case Piece.rook | Piece.black:
                     blackSlidingPieces.Add(index);
                     return;
-                case Pieces.knight | Pieces.black:
+                case Piece.knight | Piece.black:
                     blackKnights.Add(index);
                     return;
-                case Pieces.pawn | Pieces.black:
+                case Piece.pawn | Piece.black:
                     blackPawns.Add(index);
                     return;
             }
@@ -417,51 +417,51 @@ namespace Chess.Game
                     switch (c)
                     {
                         case 'P':
-                            board[coord] = Pieces.pawn | Pieces.white;
+                            board[coord] = Piece.pawn | Piece.white;
                             whitePawns.Add(coord);
                             break;
                         case 'K':
-                            board[coord] = Pieces.king | Pieces.white;
+                            board[coord] = Piece.king | Piece.white;
                             whiteKing = coord;
                             break;
                         case 'N':
-                            board[coord] = Pieces.knight | Pieces.white;
+                            board[coord] = Piece.knight | Piece.white;
                             whiteKnights.Add(coord);
                             break;
                         case 'B':
-                            board[coord] = Pieces.bishop | Pieces.white;
+                            board[coord] = Piece.bishop | Piece.white;
                             whiteSlidingPieces.Add(coord);
                             break;
                         case 'R':
-                            board[coord] = Pieces.rook | Pieces.white;
+                            board[coord] = Piece.rook | Piece.white;
                             whiteSlidingPieces.Add(coord);
                             break;
                         case 'Q':
-                            board[coord] = Pieces.queen | Pieces.white;
+                            board[coord] = Piece.queen | Piece.white;
                             whiteSlidingPieces.Add(coord);
                             break;
                         case 'p':
-                            board[coord] = Pieces.pawn | Pieces.black;
+                            board[coord] = Piece.pawn | Piece.black;
                             blackPawns.Add(coord);
                             break;
                         case 'k':
-                            board[coord] = Pieces.king | Pieces.black;
+                            board[coord] = Piece.king | Piece.black;
                             blackKing = coord;
                             break;
                         case 'n':
-                            board[coord] = Pieces.knight | Pieces.black;
+                            board[coord] = Piece.knight | Piece.black;
                             blackKnights.Add(coord);
                             break;
                         case 'b':
-                            board[coord] = Pieces.bishop | Pieces.black;
+                            board[coord] = Piece.bishop | Piece.black;
                             blackSlidingPieces.Add(coord);
                             break;
                         case 'r':
-                            board[coord] = Pieces.rook | Pieces.black;
+                            board[coord] = Piece.rook | Piece.black;
                             blackSlidingPieces.Add(coord);
                             break;
                         case 'q':
-                            board[coord] = Pieces.queen | Pieces.black;
+                            board[coord] = Piece.queen | Piece.black;
                             blackSlidingPieces.Add(coord);
                             break;
                     }
@@ -535,7 +535,7 @@ namespace Chess.Game
                 for(int col = 0; col < 8; col++)
                 {
                     int index = Coord.Combine(row, col);
-                    log += Pieces.PieceChar(board[index]);
+                    log += Piece.PieceChar(board[index]);
                 }
                 log += '\n';
             }

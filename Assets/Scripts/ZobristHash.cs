@@ -68,8 +68,8 @@ namespace Chess
         static int PieceToIndex(int piece)
         {
             if (piece == 0) return -1;
-            piece = Pieces.Type(piece) - 1;
-            if (!Pieces.IsWhite(piece)) piece += 6;
+            piece = Piece.Type(piece) - 1;
+            if (!Piece.IsWhite(piece)) piece += 6;
             return piece;
         }
     }

@@ -13,10 +13,10 @@ namespace Chess.UI
         {
             BoardUI boardUI = transform.parent.GetComponent<BoardUI>();
             GameObject piece = eventData.pointerDrag;
-            if (!piece.GetComponent<Piece>().IsTarget(index)) return;
+            if (!piece.GetComponent<PieceUI>().IsTarget(index)) return;
             if (this.piece != null )
             {
-                if(Pieces.Color(this.piece.GetComponent<Piece>().piece) == Pieces.white)
+                if(Piece.Color(this.piece.GetComponent<PieceUI>().piece) == Piece.white)
                 {
                     boardUI.whitePieces.Remove(this.piece);
                 }
@@ -26,7 +26,7 @@ namespace Chess.UI
                 }
                 Destroy(this.piece);
             }
-            piece.GetComponent<Piece>().tile = gameObject;
+            piece.GetComponent<PieceUI>().tile = gameObject;
             this.piece = piece;
         }
     }
