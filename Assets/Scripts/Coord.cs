@@ -37,7 +37,7 @@ namespace Chess
 
         public static bool IsWhite(int index)
         {
-            return (Col(index) + Row(index)) % 2 == 0;
+            return (Col(index) + Row(index)) % 2 == 1;
         }
 
         public static int KingDistance(int from, int to)

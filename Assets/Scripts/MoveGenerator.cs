@@ -194,7 +194,7 @@ namespace Chess.Game
                 moves.Add(move);
             }
 
-            if (threat.Contains(index)) return;
+            if (KingInCheck) return;
             if((board.whiteToMove && board.whiteCanCastleKing) || (!board.whiteToMove && board.blackCanCastleKing))
             {
                 int target = index + 2;

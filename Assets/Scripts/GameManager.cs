@@ -21,8 +21,8 @@ namespace Chess.Game
 
         void Start()
         {
-            //board = new Board("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
-            board = new Board("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/P1N2Q1p/1PPBBPPP/R3K2R b KQkq - 0 1");
+            board = new Board("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+            //board = new Board("2b1k3/4b3/5R2/1P2P1p1/4n1Pp/3np2P/8/4K3 w - - 0 1");
             generator = new MoveGenerator();
             moveHistory = new Stack<Move>();
 
@@ -40,23 +40,24 @@ namespace Chess.Game
         {
             board.MakeMove(move);
             moveHistory.Push(move);
-            if (board.halfMovesSinceCaptureOrPawnMove >= 100)
+            if ((!board.whiteToMove && !whitePlayerHuman) || (board.whiteToMove && !blackPlayerHuman))
+            {
+                boardUI.RedrawPieces(board);
+            }
+            if (board.draw)
             {
                 EndGame(0);
                 return;
             }
             List<Move> moves = generator.GenerateMoves(board);
+            //boardUI.HighlightThreatSquares(generator.threat);
             if (moves.Count == 0)
             {
+                board.DebugDisplayBoard();
                 if (generator.KingInCheck) EndGame((board.whiteToMove) ? -1 : 1);
                 else EndGame(0);
                 return;
             }
-            if ((!board.whiteToMove && !whitePlayerHuman) || (board.whiteToMove && !blackPlayerHuman))
-            {
-                boardUI.RedrawPieces(board);
-            }
-            board.DebugDisplayBoard();
             PrepareForMove(moves);
         }
 
@@ -64,7 +65,6 @@ namespace Chess.Game
         {
             boardUI.GetPossibleMoves(moves);
             boardUI.DisableOrEnableRaycasts(board.whiteToMove && whitePlayerHuman, !board.whiteToMove && blackPlayerHuman);
-            //boardUI.HighlightThreatSquares(generator.threat);
 
             if((board.whiteToMove && !whitePlayerHuman) || (!board.whiteToMove && !blackPlayerHuman))
             {

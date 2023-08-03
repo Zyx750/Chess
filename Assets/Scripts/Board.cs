@@ -9,6 +9,7 @@ namespace Chess.Game
         readonly int[] board;
 
         public bool whiteToMove = false;
+        public bool draw = false;
 
         public bool whiteCanCastleKing = false;
         public bool whiteCanCastleQueen = false;
@@ -33,6 +34,9 @@ namespace Chess.Game
         public uint currentGameState;
         Stack<uint> stateHistory;
 
+        ulong zobristHash = 0;
+        List<ulong> hashHistory;
+
         public Board(string fen)
         {
             board = new int[64];
@@ -53,9 +57,10 @@ namespace Chess.Game
             currentGameState = 0;   
 
             //Count half-moves for fifty move rule
-            if (board[move.Target] != 0 || Pieces.Type(board[move.Start]) == Pieces.pawn || move.MoveFlag == Move.Flag.enPassant)
+            if (board[move.Target] != 0 || Pieces.Type(board[move.Start]) == Pieces.pawn)
             {
                 halfMovesSinceCaptureOrPawnMove = 0;
+                hashHistory.Clear();
             }
             else
             {
@@ -71,6 +76,7 @@ namespace Chess.Game
             }
             else
             {
+                hashHistory.Clear();
                 int cappedPawn = (whiteToMove) ? move.Target + 8 : move.Target - 8;
                 currentGameState |= (uint)board[cappedPawn] << 17;
                 RemovePiece(cappedPawn);
@@ -182,16 +188,27 @@ namespace Chess.Game
             if (blackCanCastleKing) castling |= 0b100;
             if (blackCanCastleQueen) castling |= 0b1000;
             currentGameState |= castling;
+            if(castling != oldcastling) hashHistory.Clear();
 
             //Increment total game moves and change player to move
             if (!whiteToMove) fullMoves++;
             whiteToMove = !whiteToMove;
 
             stateHistory.Push(currentGameState);
+
+            zobristHash = ZobristHash.Hash(this, castling);
+            draw = CheckForDraw();
+            hashHistory.Add(zobristHash);
         }
 
         public void UnMakeMove(Move move)
         {
+            if(hashHistory.Count > 0)
+            {
+                hashHistory.RemoveAt(hashHistory.Count - 1);
+                zobristHash = hashHistory[hashHistory.Count-1];
+            }
+
             whiteToMove = !whiteToMove;
             int color = (whiteToMove) ? Pieces.white : Pieces.black;
             if (!whiteToMove) fullMoves--;
@@ -253,6 +270,20 @@ namespace Chess.Game
             enPassantTarget = (int)((currentGameState & 0b1111110000) >> 4) - 1;
 
             halfMovesSinceCaptureOrPawnMove = (int)((currentGameState & 0b11111110000000000) >> 10);
+        }
+
+        bool CheckForDraw()
+        {
+            if (halfMovesSinceCaptureOrPawnMove >= 100) return true;
+
+            int repCount = 0;
+            foreach (ulong hash in hashHistory)
+            {
+                if (hash == zobristHash) repCount++;
+            }
+            if (repCount > 1) return true;
+
+            return false;
         }
 
         void MovePiece(int from, int to)
@@ -362,6 +393,7 @@ namespace Chess.Game
         void BoardFromFEN(string fen)
         {
             stateHistory = new Stack<uint>();
+            hashHistory = new List<ulong>();
             int row = 0;
             int col = 0;
 
@@ -439,29 +471,30 @@ namespace Chess.Game
 
             if (fields[1] == "w") whiteToMove = true;
 
+            uint castling = 0;
             foreach (char c in fields[2])
             {
                 switch (c)
                 {
                     case 'K':
                         whiteCanCastleKing = true;
-                        currentGameState |= 0b1;
+                        castling |= 0b1;
                         break;
                     case 'Q':
                         whiteCanCastleQueen = true;
-                        currentGameState |= 0b10;
+                        castling |= 0b10;
                         break;
                     case 'k':
                         blackCanCastleKing = true;
-                        currentGameState |= 0b100;
+                        castling |= 0b100;
                         break;
                     case 'q':
                         blackCanCastleQueen = true;
-                        currentGameState |= 0b1000;
+                        castling |= 0b1000;
                         break;
                 }
             }
-
+            currentGameState |= castling;
 
             if (fields[3] != "-") enPassantTarget = Coord.CoordFromString(fields[3]);
             else enPassantTarget = -1;
@@ -478,6 +511,9 @@ namespace Chess.Game
             currentGameState |= (uint)(enPassantTarget + 1) << 4;
 
             stateHistory.Push(currentGameState);
+
+            zobristHash = ZobristHash.Hash(this, castling);
+            hashHistory.Add(zobristHash);
         }
 
         public int this[int index]

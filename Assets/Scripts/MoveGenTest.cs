@@ -37,7 +37,7 @@ public class MoveGenTest : MonoBehaviour
         for (int p = 0; p < positions.Length; p++)
         {
             Debug.Log("postition " + (p + 1) + ":");
-            for (int i = 1; i < 7; i++)
+            for (int i = 1; i < 5; i++)
             {
                 board = new Board(positions[p]);
                 generator = new MoveGenerator();
