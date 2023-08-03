@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Chess.Game
+namespace Chess
 {
     public class Board
     {

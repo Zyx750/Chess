@@ -12,6 +12,7 @@ namespace Chess.AI
         Board board;
         MoveGenerator generator;
         Evaluation evaluation;
+        MoveOrdering sort;
 
         System.Diagnostics.Stopwatch timer;
 
@@ -36,14 +37,14 @@ namespace Chess.AI
             bestMoveInSearch = null;
             bestEvalInSearch = -inf;
 
-            Search(4);
+            Search(5, 0, -inf, inf);
 
             SearchComplete();
         }
 
-        int Search(int depth, int distance = 0)
+        int Search(int depth, int distance, int alpha, int beta)
         {
-            if (depth == 0) return evaluation.Evaluate(board);
+            if (depth == 0) return evaluation.Evaluate(board, generator);
 
             int bestEval = -inf;
             Move bestMove = null;
@@ -61,17 +62,22 @@ namespace Chess.AI
                 }
             }
 
+            sort.OrderMoves(board, moves);
             foreach(Move move in moves)
             {
                 board.MakeMove(move);
-                int eval = -Search(depth - 1, distance + 1);
+                int eval = -Search(depth - 1, distance + 1, -beta, -alpha);
                 board.UnMakeMove(move);
 
-                if(eval > bestEval)
+                //if (distance == 0) Debug.Log(Move.MoveString(move) + " " + eval);
+
+                if (beta <= eval) return beta;
+                if (eval > bestEval)
                 {
                     bestEval = eval;
                     bestMove = move;
                 }
+                alpha = Math.Max(eval, alpha);
             }
 
             if(distance == 0 && bestEval > bestEvalInSearch)
@@ -88,7 +94,7 @@ namespace Chess.AI
             if (timer.IsRunning)
             {
                 timer.Stop();
-                Debug.Log("Best move: " + Move.MoveString(bestMoveInSearch) + '\n' + "Evaluation: " + bestEvalInSearch + '\n' + "Time taken: " + timer.Elapsed);
+                Debug.Log("Best move: " + Move.MoveString(bestMoveInSearch) + '\n' + "Evaluation: " + (float)bestEvalInSearch/100 + '\n' + "Time taken: " + timer.Elapsed);
             }
 
             searchComplete = true;
@@ -110,6 +116,7 @@ namespace Chess.AI
             evaluation = new();
             timer = new();
             this.onMoveMade = onMoveMade;
+            sort = new();
         }
     }
 }

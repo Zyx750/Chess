@@ -6,7 +6,7 @@ namespace Chess.Game
 {
     public class MoveGenerator
     {
-        List<Move> moves;
+        public List<Move> moves;
         public HashSet<int> threat;
         Board board;
 
