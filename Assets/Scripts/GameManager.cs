@@ -69,6 +69,7 @@ namespace Chess.Game
         {
             boardUI.GetPossibleMoves(moves);
             boardUI.DisableOrEnableRaycasts(board.whiteToMove && whitePlayerHuman, !board.whiteToMove && blackPlayerHuman);
+            boardUI.RotateView(board.whiteToMove && whitePlayerHuman || !blackPlayerHuman);
 
             if((board.whiteToMove && !whitePlayerHuman) || (!board.whiteToMove && !blackPlayerHuman))
             {

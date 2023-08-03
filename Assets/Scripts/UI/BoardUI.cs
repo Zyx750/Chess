@@ -178,5 +178,21 @@ namespace Chess.UI
             piece.transform.position = tiles[to].transform.position;
             piece.GetComponent<PieceUI>().tile = tiles[to];
         }
+
+        public void RotateView(bool white)
+        {
+            Camera camera = Camera.main;
+            Quaternion rotation = new Quaternion(0, 0, (white) ? 0 : 180, 0);
+            camera.transform.rotation = rotation;
+
+            foreach (GameObject piece in whitePieces)
+            {
+                piece.transform.rotation = rotation;
+            }
+            foreach (GameObject piece in blackPieces)
+            {
+                piece.transform.rotation = rotation;
+            }
+        }
     }
 }
