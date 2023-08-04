@@ -42,13 +42,24 @@ namespace Chess.Game
 
         void GenerateSlidingMoves()
         {
-            List<int> pieces = (board.whiteToMove) ? board.whiteSlidingPieces : board.blackSlidingPieces;
-            foreach (int index in pieces)
+            List<int> queens = (board.whiteToMove) ? board.whiteQueens : board.blackQueens;
+            List<int> rooks = (board.whiteToMove) ? board.whiteRooks : board.blackRooks;
+            List<int> bishops = (board.whiteToMove) ? board.whiteBishops : board.blackBishops;
+
+            foreach (int index in queens)
             {
                 int piece = board[index];
-                int startIndex = (Piece.Type(piece) == Piece.bishop) ? 4 : 0;
-                int endIndex = (Piece.Type(piece) == Piece.rook) ? 4 : 8;
-                GenerateSlidingPieceMoves(startIndex, endIndex, index);
+                GenerateSlidingPieceMoves(0, 8, index);
+            }
+            foreach (int index in rooks)
+            {
+                int piece = board[index];
+                GenerateSlidingPieceMoves(0, 4, index);
+            }
+            foreach (int index in bishops)
+            {
+                int piece = board[index];
+                GenerateSlidingPieceMoves(4, 8, index);
             }
         }
 
@@ -311,13 +322,24 @@ namespace Chess.Game
 
         void GenerateSlidingThreat()
         {
-            List<int> pieces = (!board.whiteToMove) ? board.whiteSlidingPieces : board.blackSlidingPieces;
-            foreach (int index in pieces)
+            List<int> queens = (!board.whiteToMove) ? board.whiteQueens : board.blackQueens;
+            List<int> rooks = (!board.whiteToMove) ? board.whiteRooks : board.blackRooks;
+            List<int> bishops = (!board.whiteToMove) ? board.whiteBishops : board.blackBishops;
+
+            foreach (int index in queens)
             {
                 int piece = board[index];
-                int startIndex = (Piece.Type(piece) == Piece.bishop) ? 4 : 0;
-                int endIndex = (Piece.Type(piece) == Piece.rook) ? 4 : 8;
-                GenerateSlidingPieceThreat(startIndex, endIndex, index);
+                GenerateSlidingPieceThreat(0, 8, index);
+            }
+            foreach (int index in rooks)
+            {
+                int piece = board[index];
+                GenerateSlidingPieceThreat(0, 4, index);
+            }
+            foreach (int index in bishops)
+            {
+                int piece = board[index];
+                GenerateSlidingPieceThreat(4, 8, index);
             }
         }
 

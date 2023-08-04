@@ -1,4 +1,6 @@
 using Chess.Game;
+using Chess.UI;
+using System.Collections.Generic;
 
 namespace Chess.AI
 {
@@ -13,6 +15,8 @@ namespace Chess.AI
         Board board;
         MoveGenerator generator;
 
+        bool endgame;
+
         public int Evaluate(Board board, MoveGenerator generator)
         {
             this.board = board;
@@ -20,49 +24,74 @@ namespace Chess.AI
             if (board.draw) return 0;
 
             int eval = 0;
+            endgame = false;
 
-            eval += CountMaterial();
-            eval += CountMoves();
+            int whitePieces = CountMaterial(true);
+            int blackPieces = CountMaterial(false);
+            eval += whitePieces - blackPieces;
+            if(whitePieces < 1600 && blackPieces < 1600) endgame = true;
+
+            int whitePiecePosition = AddPieceSquareTableValues(true);
+            int blackPiecePosition = AddPieceSquareTableValues(false);
+            eval += whitePiecePosition - blackPiecePosition;
 
             if (!board.whiteToMove) eval *= -1;
             return eval;
         }
 
-        int CountMaterial()
+        int CountMaterial(bool white)
         {
             int sum = 0;
-            for (int i = 0; i < 64; i++)
-            {
-                int piece = board[i];
-                int pieceVal = 0;
-                switch (Piece.Type(piece))
-                {
-                    case Piece.queen:
-                        pieceVal = queenVal;
-                        break;
-                    case Piece.bishop:
-                        pieceVal = bishopVal;
-                        break;
-                    case Piece.knight:
-                        pieceVal = knightVal;
-                        break;
-                    case Piece.rook:
-                        pieceVal = rookVal;
-                        break;
-                    case Piece.pawn:
-                        pieceVal = pawnVal;
-                        break;
-                }
-                if (!Piece.IsWhite(piece)) pieceVal *= -1;
-                sum += pieceVal;
-            }
+            List<int> queens = (white) ? board.whiteQueens : board.blackQueens;
+            List<int> rooks = (white) ? board.whiteRooks : board.blackRooks;
+            List<int> bishops = (white) ? board.whiteBishops : board.blackBishops;
+            List<int> knights = (white) ? board.whiteKnights : board.blackKnights;
+            List<int> pawns = (white) ? board.whitePawns : board.blackPawns;
+
+            sum += queenVal * queens.Count;
+            sum += rookVal * rooks.Count;
+            sum += bishopVal * bishops.Count;
+            sum += knightVal * knights.Count;
+            sum += pawnVal * pawns.Count;
+
             return sum;
         }
 
-        int CountMoves()
+        int AddPieceSquareTableValues(bool white)
         {
-            int sum = generator.moves.Count - generator.threat.Count;
-            if(!board.whiteToMove) sum *= -1;
+            int sum = 0;
+
+            List<int> queens = (white) ? board.whiteQueens : board.blackQueens;
+            List<int> rooks = (white) ? board.whiteRooks : board.blackRooks;
+            List<int> bishops = (white) ? board.whiteBishops : board.blackBishops;
+            List<int> knights = (white) ? board.whiteKnights : board.blackKnights;
+            List<int> pawns = (white) ? board.whitePawns : board.blackPawns;
+            int king = (white) ? board.whiteKing : board.blackKing;
+
+            foreach(int piece in queens)
+            {
+                sum += PieceSquareValues.ReadFromTable(PieceSquareValues.queenTable, piece, white);
+            }
+            foreach (int piece in rooks)
+            {
+                sum += PieceSquareValues.ReadFromTable(PieceSquareValues.queenTable, piece, white);
+            }
+            foreach (int piece in bishops)
+            {
+                sum += PieceSquareValues.ReadFromTable(PieceSquareValues.queenTable, piece, white);
+            }
+            foreach (int piece in knights)
+            {
+                sum += PieceSquareValues.ReadFromTable(PieceSquareValues.queenTable, piece, white);
+            }
+            foreach (int piece in pawns)
+            {
+                sum += PieceSquareValues.ReadFromTable(PieceSquareValues.queenTable, piece, white);
+            }
+
+            if(endgame) sum += PieceSquareValues.ReadFromTable(PieceSquareValues.kingEndgameTable, king, white);
+            else sum += PieceSquareValues.ReadFromTable(PieceSquareValues.kingTable, king, white);
+
             return sum;
         }
     }

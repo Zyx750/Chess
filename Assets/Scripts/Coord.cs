@@ -27,12 +27,12 @@ namespace Chess
         {
             int row = tile[1] - '1';
             int col = tile[0] - 'a';
-            return Combine(7-row, col);
+            return Combine(row, col);
         }
 
         public static int Combine(int row, int col)
         {
-            return 8 * row + col;
+            return 8 * (7-row) + col;
         }
 
         public static bool IsWhite(int index)

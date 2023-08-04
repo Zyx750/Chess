@@ -30,7 +30,7 @@ namespace Chess.UI
             {
                 for (int col = 0; col < 8; col++)
                 {
-                    int index = Coord.Combine(row, col);
+                    int index = Coord.Combine(7 - row, col);
                     Vector2 pos = new(col + 0.5f, 7 - row + 0.5f);
                     pos += (Vector2)transform.position;
                     tiles[index] = Instantiate(square, pos, Quaternion.identity, transform);
@@ -51,7 +51,7 @@ namespace Chess.UI
             {
                 for (int col = 0; col < 8; col++)
                 {
-                    int index = Coord.Combine(row, col);
+                    int index = Coord.Combine(7 - row, col);
                     int piece = board[index];
                     if(piece != 0)
                     {
