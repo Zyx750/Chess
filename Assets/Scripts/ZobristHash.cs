@@ -1,4 +1,3 @@
-using Chess.Game;
 using System;
 
 namespace Chess
@@ -28,7 +27,6 @@ namespace Chess
             hash ^= castlingRights[castling];
 
             hash ^= enPassantCol[Coord.Col(board.enPassantTarget)];
-
             return hash;
         }
 

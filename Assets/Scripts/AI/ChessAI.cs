@@ -13,27 +13,31 @@ namespace Chess.AI
         MoveGenerator generator;
         Evaluation evaluation;
         MoveOrdering sort;
+        TranspositionTable tTable;
 
         System.Diagnostics.Stopwatch timer;
 
         const int inf = int.MaxValue;
+        const ulong transpositionTableSize = 64000;
 
         Move bestMoveInSearch;
         int bestEvalInSearch;
 
         bool searchComplete;
+        int lookups;
 
         public void ChooseMove(bool debugInfo = false)
         {
             searchComplete = false;
             if (debugInfo) timer.Restart();
 
-            Thread thread = new Thread(new ThreadStart(StartSearch));
+            Thread thread = new(new ThreadStart(StartSearch));
             thread.Start();
         }
 
         void StartSearch()
         {
+            lookups = 0;
             bestMoveInSearch = null;
             bestEvalInSearch = -inf;
 
@@ -44,9 +48,32 @@ namespace Chess.AI
 
         int Search(int depth, int distance, int alpha, int beta)
         {
-            if (depth == 0) return evaluation.Evaluate(board, generator);
+            if(distance > 0)
+            {
+                if (board.hashHistory.Contains(board.zobristHash))
+                {
+                    return 0;
+                }
+            }
 
-            int bestEval = -inf;
+            int ttEval = tTable.LookupEval(depth, alpha, beta);
+            if(ttEval != TranspositionTable.lookupFailed)
+            {
+                lookups++;
+                if (distance == 0)
+                {
+                    bestEvalInSearch = ttEval;
+                    bestMoveInSearch = tTable.GetBestMove();
+                }
+                return ttEval;
+            }
+
+            if (depth == 0)
+            {
+                int eval = evaluation.Evaluate(board, generator);
+                return eval;
+            }
+
             Move bestMove = null;
 
             var moves = generator.GenerateMoves(board);
@@ -62,35 +89,43 @@ namespace Chess.AI
                 }
             }
 
+            byte flag = TranspositionTable.alpha;
+
             sort.OrderMoves(board, moves);
             foreach(Move move in moves)
             {
-                board.MakeMove(move);
+                board.MakeMove(move, true);
                 int eval = -Search(depth - 1, distance + 1, -beta, -alpha);
-                board.UnMakeMove(move);
-
-                //if (distance == 0) Debug.Log(Move.MoveString(move) + " " + eval);
-
-                if (beta <= eval) return beta;
-                if (eval > bestEval)
+                board.UnMakeMove(move, true);
+                if (eval >= beta)
                 {
-                    bestEval = eval;
-                    bestMove = move;
+                    tTable.StorePosition(move, beta, depth, TranspositionTable.beta);
+                    return beta;
                 }
-                alpha = Math.Max(eval, alpha);
+
+                if (eval > alpha)
+                {
+                    alpha = eval;
+                    bestMove = move;
+
+                    flag = TranspositionTable.exact;
+
+                    if (distance == 0)
+                    {
+                        bestEvalInSearch = eval;
+                        bestMoveInSearch = move;
+                    }
+                }
             }
 
-            if(distance == 0 && bestEval > bestEvalInSearch)
-            {
-                bestEvalInSearch = bestEval;
-                bestMoveInSearch = bestMove;
-            } 
+            tTable.StorePosition(bestMove, alpha, depth, flag);
 
-            return bestEval;
+            return alpha;
         }
 
         void SearchComplete()
         {
+            Debug.Log("Lookups: " + lookups);
             if (timer.IsRunning)
             {
                 timer.Stop();
@@ -117,6 +152,7 @@ namespace Chess.AI
             timer = new();
             this.onMoveMade = onMoveMade;
             sort = new();
+            tTable = new(board, transpositionTableSize);
         }
     }
 }

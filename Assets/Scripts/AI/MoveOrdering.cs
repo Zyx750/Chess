@@ -18,10 +18,11 @@ namespace Chess.AI
                 int movedPiece = Piece.Type(board[moves[i].Start]);
                 int cappedPiece = Piece.Type(board[moves[i].Target]);
 
-                if(cappedPiece != 0)
+                if (cappedPiece != 0)
                 {
                     moveScore[i] += captureMultiplier * PieceValue(cappedPiece) - PieceValue(movedPiece);
                 }
+                else if (moves[i].MoveFlag == Move.Flag.enPassant) moveScore[i] += captureMultiplier * Evaluation.pawnVal;
 
                 if (moves[i].MoveFlag > 3)
                 {

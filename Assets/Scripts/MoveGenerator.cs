@@ -198,7 +198,7 @@ namespace Chess.Game
             foreach (int dir in kingVectors)
             {
                 int target = index + dir;
-                if (target < 0 || target > 63 || threat.Contains(target) || Coord.KingDistance(index, target) > 1) continue;
+                if (target < 0 || target > 63 || Coord.KingDistance(index, target) > 1 || threat.Contains(target)) continue;
                 int targetPiece = board[target];
                 if (Piece.Color(targetPiece) == friendly) continue;
                 Move move = new(index, target);

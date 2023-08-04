@@ -70,27 +70,27 @@ namespace Chess.AI
 
             foreach(int piece in queens)
             {
-                sum += PieceSquareValues.ReadFromTable(PieceSquareValues.queenTable, piece, white);
+                sum += PieceSquareTables.ReadFromTable(PieceSquareTables.queenTable, piece, white);
             }
             foreach (int piece in rooks)
             {
-                sum += PieceSquareValues.ReadFromTable(PieceSquareValues.queenTable, piece, white);
+                sum += PieceSquareTables.ReadFromTable(PieceSquareTables.queenTable, piece, white);
             }
             foreach (int piece in bishops)
             {
-                sum += PieceSquareValues.ReadFromTable(PieceSquareValues.queenTable, piece, white);
+                sum += PieceSquareTables.ReadFromTable(PieceSquareTables.queenTable, piece, white);
             }
             foreach (int piece in knights)
             {
-                sum += PieceSquareValues.ReadFromTable(PieceSquareValues.queenTable, piece, white);
+                sum += PieceSquareTables.ReadFromTable(PieceSquareTables.queenTable, piece, white);
             }
             foreach (int piece in pawns)
             {
-                sum += PieceSquareValues.ReadFromTable(PieceSquareValues.queenTable, piece, white);
+                sum += PieceSquareTables.ReadFromTable(PieceSquareTables.queenTable, piece, white);
             }
 
-            if(endgame) sum += PieceSquareValues.ReadFromTable(PieceSquareValues.kingEndgameTable, king, white);
-            else sum += PieceSquareValues.ReadFromTable(PieceSquareValues.kingTable, king, white);
+            if(endgame) sum += PieceSquareTables.ReadFromTable(PieceSquareTables.kingEndgameTable, king, white);
+            else sum += PieceSquareTables.ReadFromTable(PieceSquareTables.kingTable, king, white);
 
             return sum;
         }

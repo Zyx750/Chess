@@ -1,19 +1,19 @@
-using Chess;
-
-public static class PieceSquareValues
+namespace Chess.AI
 {
-    public static int ReadFromTable(int[] table, int pos, bool white)
+    public static class PieceSquareTables
     {
-        if (white)
+        public static int ReadFromTable(int[] table, int pos, bool white)
         {
-            pos = Coord.Combine(7 - Coord.Row(pos), Coord.Col(pos));
+            if (white)
+            {
+                pos = Coord.Combine(7 - Coord.Row(pos), Coord.Col(pos));
+            }
+
+            return table[pos];
         }
 
-        return table[pos];
-    }
-
-    public readonly static int[] pawnTable =
-    {
+        public readonly static int[] pawnTable =
+        {
         0,  0,  0,  0,  0,  0,  0,  0,
         50, 50, 50, 50, 50, 50, 50, 50,
         10, 10, 20, 30, 30, 20, 10, 10,
@@ -24,8 +24,8 @@ public static class PieceSquareValues
         0,  0,  0,  0,  0,  0,  0,  0
     };
 
-    public readonly static int[] knightTable =
-    {
+        public readonly static int[] knightTable =
+        {
         -50,-40,-30,-30,-30,-30,-40,-50,
         -40,-20,  0,  0,  0,  0,-20,-40,
         -30,  0, 10, 15, 15, 10,  0,-30,
@@ -36,8 +36,8 @@ public static class PieceSquareValues
         -50,-40,-30,-30,-30,-30,-40,-50,
     };
 
-    public readonly static int[] bishopTable =
-    {
+        public readonly static int[] bishopTable =
+        {
         -20,-10,-10,-10,-10,-10,-10,-20,
         -10,  0,  0,  0,  0,  0,  0,-10,
         -10,  0,  5, 10, 10,  5,  0,-10,
@@ -48,8 +48,8 @@ public static class PieceSquareValues
         -20,-10,-10,-10,-10,-10,-10,-20,
     };
 
-    public readonly static int[] rookTable =
-    {
+        public readonly static int[] rookTable =
+        {
           0,  0,  0,  0,  0,  0,  0,  0,
           5, 10, 10, 10, 10, 10, 10,  5,
          -5,  0,  0,  0,  0,  0,  0, -5,
@@ -60,8 +60,8 @@ public static class PieceSquareValues
           0,  0,  0,  5,  5,  0,  0,  0
     };
 
-    public readonly static int[] queenTable =
-    {
+        public readonly static int[] queenTable =
+        {
         -20,-10,-10, -5, -5,-10,-10,-20,
         -10,  0,  0,  0,  0,  0,  0,-10,
         -10,  0,  5,  5,  5,  5,  0,-10,
@@ -72,8 +72,8 @@ public static class PieceSquareValues
         -20,-10,-10, -5, -5,-10,-10,-20
     };
 
-    public readonly static int[] kingTable =
-    {
+        public readonly static int[] kingTable =
+        {
         -30,-40,-40,-50,-50,-40,-40,-30,
         -30,-40,-40,-50,-50,-40,-40,-30,
         -30,-40,-40,-50,-50,-40,-40,-30,
@@ -84,8 +84,8 @@ public static class PieceSquareValues
          20, 30, 10,  0,  0, 10, 30, 20
     };
 
-    public readonly static int[] kingEndgameTable =
-    {
+        public readonly static int[] kingEndgameTable =
+        {
         -50,-40,-30,-20,-20,-30,-40,-50,
         -30,-20,-10,  0,  0,-10,-20,-30,
         -30,-10, 20, 30, 30, 20,-10,-30,
@@ -95,4 +95,5 @@ public static class PieceSquareValues
         -30,-30,  0,  0,  0,  0,-30,-30,
         -50,-30,-30,-30,-30,-30,-30,-50
     };
+    }
 }
