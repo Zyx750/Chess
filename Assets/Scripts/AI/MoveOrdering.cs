@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace Chess.AI
 {
@@ -8,9 +7,12 @@ namespace Chess.AI
         int[] moveScore;
         const int captureMultiplier = 10;
 
+        TranspositionTable tTable;
+
         public void OrderMoves(Board board, List<Move> moves)
         {
             moveScore = new int[moves.Count];
+            Move storedMove = tTable.GetBestMove();
 
             for(int i = 0; i < moves.Count; i++)
             {
@@ -29,7 +31,7 @@ namespace Chess.AI
                     switch(moves[i].MoveFlag)
                     {
                         case Move.Flag.promoteQ:
-                            moveScore[i] += Evaluation.queenVal;
+                            moveScore[i] += 10*Evaluation.queenVal;
                             break;
                         case Move.Flag.promoteB:
                             moveScore[i] += Evaluation.bishopVal;
@@ -41,6 +43,11 @@ namespace Chess.AI
                             moveScore[i] += Evaluation.rookVal;
                             break;
                     }
+                }
+
+                if (Move.SameMove(storedMove, moves[i]))
+                {
+                    moveScore[i] += 10000;
                 }
             }
 
@@ -74,6 +81,11 @@ namespace Chess.AI
                     else break;
                 }
             }
+        }
+
+        public MoveOrdering(TranspositionTable tTable)
+        {
+            this.tTable = tTable;
         }
     }
 }

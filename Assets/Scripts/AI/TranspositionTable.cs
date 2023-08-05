@@ -1,3 +1,5 @@
+using UnityEngine;
+
 namespace Chess.AI
 {
     public class TranspositionTable
@@ -13,10 +15,13 @@ namespace Chess.AI
 
         Entry[] entries;
 
-        public TranspositionTable(Board board, ulong size)
+        public TranspositionTable(Board board, ulong sizeMB)
         {
             this.board = board;
-            this.size = size;
+
+            int entrySize = System.Runtime.InteropServices.Marshal.SizeOf<TranspositionTable.Entry>();
+            ulong sizeInBytes = sizeMB * 1024 * 1024;
+            size = sizeInBytes / (ulong)entrySize;
 
             entries = new Entry[size];
         }

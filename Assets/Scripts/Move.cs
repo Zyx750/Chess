@@ -66,5 +66,11 @@ namespace Chess
         {
             return Coord.TileString(move.Start) + " => " + Coord.TileString(move.Target) + " flag: " + move.MoveFlag;
         }
+
+        public static bool SameMove(Move move1, Move move2)
+        {
+            if(move1 == null || move2 == null) return false;
+            return move1.moveValue == move2.moveValue;
+        }
     }
 }

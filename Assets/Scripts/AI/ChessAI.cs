@@ -1,6 +1,7 @@
 using Chess.Game;
 using System;
 using System.Threading;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Chess.AI
@@ -16,23 +17,35 @@ namespace Chess.AI
         TranspositionTable tTable;
 
         System.Diagnostics.Stopwatch timer;
+        CancellationTokenSource searchAbortTimer;
 
         const int inf = int.MaxValue;
-        const ulong transpositionTableSize = 64000;
+        const ulong transpositionTableSizeMB = 64;
+        const int searchTimeMillis = 1000;
+        const int maxDepth = 20;
 
         Move bestMoveInSearch;
         int bestEvalInSearch;
+        Move bestMoveThisIteration;
+        int bestEvalThisIteration;
 
         bool searchComplete;
-        int lookups;
+        bool abortSearch;
+
+        uint lookups;
+        int searchDepth;
 
         public void ChooseMove(bool debugInfo = false)
         {
             searchComplete = false;
+            abortSearch = false;
             if (debugInfo) timer.Restart();
 
             Thread thread = new(new ThreadStart(StartSearch));
             thread.Start();
+
+            searchAbortTimer = new();
+            Task.Delay(searchTimeMillis, searchAbortTimer.Token).ContinueWith((t) => EndSearch());
         }
 
         void StartSearch()
@@ -41,13 +54,32 @@ namespace Chess.AI
             bestMoveInSearch = null;
             bestEvalInSearch = -inf;
 
-            Search(5, 0, -inf, inf);
+            for(int i = 1; i <= maxDepth; i++)
+            {
+                bestMoveThisIteration = null;
+                bestEvalThisIteration = -inf;
+
+                Search(i, 0, -inf, inf);
+
+                if (abortSearch)
+                {
+                    break;
+                }
+                else
+                {
+                    bestMoveInSearch = bestMoveThisIteration;
+                    bestEvalInSearch = bestEvalThisIteration;
+                    searchDepth = i;
+                }
+            }
 
             SearchComplete();
         }
 
         int Search(int depth, int distance, int alpha, int beta)
         {
+            if (abortSearch) return 0;
+
             if(distance > 0)
             {
                 if (board.hashHistory.Contains(board.zobristHash))
@@ -62,8 +94,8 @@ namespace Chess.AI
                 lookups++;
                 if (distance == 0)
                 {
-                    bestEvalInSearch = ttEval;
-                    bestMoveInSearch = tTable.GetBestMove();
+                    bestEvalThisIteration = ttEval;
+                    bestMoveThisIteration = tTable.GetBestMove();
                 }
                 return ttEval;
             }
@@ -112,8 +144,8 @@ namespace Chess.AI
 
                     if (distance == 0)
                     {
-                        bestEvalInSearch = eval;
-                        bestMoveInSearch = move;
+                        bestEvalThisIteration = eval;
+                        bestMoveThisIteration = move;
                     }
                 }
             }
@@ -129,10 +161,15 @@ namespace Chess.AI
             if (timer.IsRunning)
             {
                 timer.Stop();
-                Debug.Log("Best move: " + Move.MoveString(bestMoveInSearch) + '\n' + "Evaluation: " + (float)bestEvalInSearch/100 + '\n' + "Time taken: " + timer.Elapsed);
+                Debug.Log("Best move: " + Move.MoveString(bestMoveInSearch) + '\n' + "Evaluation: " + (float)bestEvalInSearch/100 + '\n' + "Time taken: " + timer.Elapsed + '\n' + "Depth: " + searchDepth);
             }
 
             searchComplete = true;
+        }
+
+        void EndSearch()
+        {
+            abortSearch = true;
         }
 
         void Update()
@@ -146,13 +183,13 @@ namespace Chess.AI
 
         public void Init(Board board, Action<Move> onMoveMade)
         {
-            generator = new();
             this.board = board;
+            this.onMoveMade = onMoveMade;
+            generator = new();
             evaluation = new();
             timer = new();
-            this.onMoveMade = onMoveMade;
-            sort = new();
-            tTable = new(board, transpositionTableSize);
+            tTable = new(board, transpositionTableSizeMB);
+            sort = new(tTable);
         }
     }
 }
