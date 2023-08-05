@@ -78,8 +78,6 @@ namespace Chess.AI
 
         int Search(int depth, int distance, int alpha, int beta)
         {
-            if (abortSearch) return 0;
-
             if(distance > 0)
             {
                 if (board.hashHistory.Contains(board.zobristHash))
@@ -129,6 +127,9 @@ namespace Chess.AI
                 board.MakeMove(move, true);
                 int eval = -Search(depth - 1, distance + 1, -beta, -alpha);
                 board.UnMakeMove(move, true);
+
+                if (abortSearch) return alpha;
+
                 if (eval >= beta)
                 {
                     tTable.StorePosition(move, beta, depth, TranspositionTable.beta);
