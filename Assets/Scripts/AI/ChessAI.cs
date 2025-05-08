@@ -21,7 +21,7 @@ namespace Chess.AI
 
         const int inf = int.MaxValue;
         const ulong transpositionTableSizeMB = 64;
-        const int searchTimeMillis = 1000;
+        const int searchTimeMillis = 2000;
         const int maxDepth = 20;
 
         Move bestMoveInSearch;
@@ -54,7 +54,7 @@ namespace Chess.AI
             bestMoveInSearch = null;
             bestEvalInSearch = -inf;
 
-            for(int i = 1; i <= maxDepth; i++)
+            for (int i = 1; i <= maxDepth; i++)
             {
                 bestMoveThisIteration = null;
                 bestEvalThisIteration = -inf;
@@ -78,7 +78,7 @@ namespace Chess.AI
 
         int Search(int depth, int distance, int alpha, int beta)
         {
-            if(distance > 0)
+            if (distance > 0)
             {
                 if (board.hashHistory.Contains(board.zobristHash))
                 {
@@ -87,7 +87,7 @@ namespace Chess.AI
             }
 
             int ttEval = tTable.LookupEval(depth, alpha, beta);
-            if(ttEval != TranspositionTable.lookupFailed)
+            if (ttEval != TranspositionTable.lookupFailed)
             {
                 lookups++;
                 if (distance == 0)
@@ -107,9 +107,9 @@ namespace Chess.AI
             Move bestMove = null;
 
             var moves = generator.GenerateMoves(board);
-            if(moves.Count == 0)
+            if (moves.Count == 0)
             {
-                if(generator.KingInCheck)
+                if (generator.KingInCheck)
                 {
                     return -inf + distance;
                 }
@@ -122,7 +122,7 @@ namespace Chess.AI
             byte flag = TranspositionTable.alpha;
 
             sort.OrderMoves(board, moves);
-            foreach(Move move in moves)
+            foreach (Move move in moves)
             {
                 board.MakeMove(move, true);
                 int eval = -Search(depth - 1, distance + 1, -beta, -alpha);
@@ -162,7 +162,7 @@ namespace Chess.AI
             if (timer.IsRunning)
             {
                 timer.Stop();
-                Debug.Log("Best move: " + Move.MoveString(bestMoveInSearch) + '\n' + "Evaluation: " + (float)bestEvalInSearch/100 + '\n' + "Time taken: " + timer.Elapsed + '\n' + "Depth: " + searchDepth);
+                Debug.Log("Best move: " + Move.MoveString(bestMoveInSearch) + '\n' + "Evaluation: " + (float)bestEvalInSearch / 100 + '\n' + "Time taken: " + timer.Elapsed + '\n' + "Depth: " + searchDepth);
             }
 
             searchComplete = true;
@@ -175,7 +175,7 @@ namespace Chess.AI
 
         void Update()
         {
-            if(searchComplete)
+            if (searchComplete)
             {
                 searchComplete = false;
                 onMoveMade(bestMoveInSearch);
