@@ -21,7 +21,8 @@ namespace Chess.Game
 
         Stack<Move> moveHistory;
 
-        public static void PushNextSettings(bool whitePlayerHuman, bool blackPlayerHuman) {
+        public static void PushNextSettings(bool whitePlayerHuman, bool blackPlayerHuman)
+        {
             nextWhitePlayerHuman = whitePlayerHuman;
             nextBlackPlayerHuman = blackPlayerHuman;
         }
@@ -49,7 +50,7 @@ namespace Chess.Game
             List<Move> moves = generator.GenerateMoves(board);
             PrepareForMove(moves);
         }
-        
+
         public void MakeMove(Move move)
         {
             board.MakeMove(move);
@@ -79,9 +80,9 @@ namespace Chess.Game
         {
             boardUI.GetPossibleMoves(moves);
             boardUI.DisableOrEnableRaycasts(board.whiteToMove && whitePlayerHuman, !board.whiteToMove && blackPlayerHuman);
-            boardUI.RotateView(board.whiteToMove && whitePlayerHuman || !blackPlayerHuman);
+            //boardUI.RotateView(board.whiteToMove && whitePlayerHuman || !blackPlayerHuman);
 
-            if((board.whiteToMove && !whitePlayerHuman) || (!board.whiteToMove && !blackPlayerHuman))
+            if ((board.whiteToMove && !whitePlayerHuman) || (!board.whiteToMove && !blackPlayerHuman))
             {
                 bot.ChooseMove(true);
             }
