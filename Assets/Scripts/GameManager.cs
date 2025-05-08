@@ -14,13 +14,23 @@ namespace Chess.Game
 
         public bool whitePlayerHuman;
         public bool blackPlayerHuman;
+        private static bool nextWhitePlayerHuman = true;
+        private static bool nextBlackPlayerHuman = false;
 
         ChessAI bot;
 
         Stack<Move> moveHistory;
 
+        public static void PushNextSettings(bool whitePlayerHuman, bool blackPlayerHuman) {
+            nextWhitePlayerHuman = whitePlayerHuman;
+            nextBlackPlayerHuman = blackPlayerHuman;
+        }
+
         void Start()
         {
+            whitePlayerHuman = nextWhitePlayerHuman;
+            blackPlayerHuman = nextBlackPlayerHuman;
+
             board = new Board("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
             //board = new Board("2b1k3/4b3/5R2/1P2P1p1/4n1Pp/3np2P/8/4K3 w - - 0 1");
             generator = new MoveGenerator();
