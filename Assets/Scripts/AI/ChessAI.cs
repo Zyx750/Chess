@@ -21,8 +21,8 @@ namespace Chess.AI
 
         const int inf = int.MaxValue;
         const ulong transpositionTableSizeMB = 64;
-        const int searchTimeMillis = 1000;
-        const int maxDepth = 20;
+        int searchTimeMillis = 1000;
+        const int maxDepth = 100;
 
         Move bestMoveInSearch;
         int bestEvalInSearch;
@@ -182,10 +182,11 @@ namespace Chess.AI
             }
         }
 
-        public void Init(Board board, Action<Move> onMoveMade)
+        public void Init(Board board, Action<Move> onMoveMade, int searchTimeMillis)
         {
             this.board = board;
             this.onMoveMade = onMoveMade;
+            this.searchTimeMillis = searchTimeMillis;
             generator = new();
             evaluation = new();
             timer = new();

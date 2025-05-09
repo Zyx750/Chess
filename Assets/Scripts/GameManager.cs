@@ -16,6 +16,8 @@ namespace Chess.Game
         public bool blackPlayerHuman;
         private static bool nextWhitePlayerHuman = true;
         private static bool nextBlackPlayerHuman = false;
+        
+        public static float nextAiTimeout = 5;
 
         ChessAI bot;
 
@@ -43,7 +45,7 @@ namespace Chess.Game
             if (!whitePlayerHuman || !blackPlayerHuman)
             {
                 bot = gameObject.AddComponent(typeof(ChessAI)) as ChessAI;
-                bot.Init(board, MakeMove);
+                bot.Init(board, MakeMove, (int)(nextAiTimeout * 1000));
             }
 
             List<Move> moves = generator.GenerateMoves(board);
@@ -79,7 +81,11 @@ namespace Chess.Game
         {
             boardUI.GetPossibleMoves(moves);
             boardUI.DisableOrEnableRaycasts(board.whiteToMove && whitePlayerHuman, !board.whiteToMove && blackPlayerHuman);
-            boardUI.RotateView(board.whiteToMove && whitePlayerHuman || !blackPlayerHuman);
+            if (whitePlayerHuman && blackPlayerHuman) {
+                boardUI.RotateView(board.whiteToMove && whitePlayerHuman || !blackPlayerHuman);
+            } else {
+                boardUI.RotateViewAndCamera(whitePlayerHuman);
+            }
 
             if((board.whiteToMove && !whitePlayerHuman) || (!board.whiteToMove && !blackPlayerHuman))
             {
