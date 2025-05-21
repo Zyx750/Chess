@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using Chess;
 using Chess.AI;
 using Chess.Game;
+using Chess.UI;
 using UnityEngine;
 
 public class AiTest : MonoBehaviour
 {
     ChessAI bot;
+    BoardUI boardUI;
+    public GameObject boardUIObject;
     Board board;
     MoveGenerator generator;
     int searchTimeWhite = 1000;
@@ -17,6 +20,8 @@ public class AiTest : MonoBehaviour
     {
         bot = gameObject.AddComponent(typeof(ChessAI)) as ChessAI;
         generator = new MoveGenerator();
+
+        boardUI = boardUIObject.GetComponent<BoardUI>();
 
         StartCoroutine(RunGames());
     }
@@ -49,6 +54,9 @@ public class AiTest : MonoBehaviour
     IEnumerator PlayGameCoroutine(int whiteAiTimeMs, int blackAiTimeMs, System.Action<int> onGameEnd = null)
     {
         board = new Board();
+        boardUI.DrawBoard();
+        boardUI.DrawPieces(board);
+
         gameResult = int.MinValue;
 
         bot.Init(board, MakeMove, whiteAiTimeMs);
@@ -77,6 +85,7 @@ public class AiTest : MonoBehaviour
     public void MakeMove(Move move)
     {
         board.MakeMove(move);
+        boardUI.RedrawPieces(board);
         if (board.draw)
         {
             EndGame(0);
@@ -103,5 +112,13 @@ public class AiTest : MonoBehaviour
             bot.searchTimeMillis = searchTimeBlack;
         }
         bot.ChooseMove();
+    }
+
+    void DrawBoard()
+    {
+        Board board = new("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+        boardUI = boardUIObject.GetComponent<BoardUI>();
+        boardUI.DrawBoard();
+        boardUI.DrawPieces(board);
     }
 }
