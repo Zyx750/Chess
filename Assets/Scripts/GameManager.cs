@@ -16,14 +16,15 @@ namespace Chess.Game
         public bool blackPlayerHuman;
         private static bool nextWhitePlayerHuman = true;
         private static bool nextBlackPlayerHuman = false;
-        
+
         public static float nextAiTimeout = 5;
 
         ChessAI bot;
 
         Stack<Move> moveHistory;
 
-        public static void PushNextSettings(bool whitePlayerHuman, bool blackPlayerHuman) {
+        public static void PushNextSettings(bool whitePlayerHuman, bool blackPlayerHuman)
+        {
             nextWhitePlayerHuman = whitePlayerHuman;
             nextBlackPlayerHuman = blackPlayerHuman;
         }
@@ -33,8 +34,7 @@ namespace Chess.Game
             whitePlayerHuman = nextWhitePlayerHuman;
             blackPlayerHuman = nextBlackPlayerHuman;
 
-            board = new Board("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
-            //board = new Board("2b1k3/4b3/5R2/1P2P1p1/4n1Pp/3np2P/8/4K3 w - - 0 1");
+            board = new Board();
             generator = new MoveGenerator();
             moveHistory = new Stack<Move>();
 
@@ -51,7 +51,7 @@ namespace Chess.Game
             List<Move> moves = generator.GenerateMoves(board);
             PrepareForMove(moves);
         }
-        
+
         public void MakeMove(Move move)
         {
             board.MakeMove(move);
@@ -81,13 +81,16 @@ namespace Chess.Game
         {
             boardUI.GetPossibleMoves(moves);
             boardUI.DisableOrEnableRaycasts(board.whiteToMove && whitePlayerHuman, !board.whiteToMove && blackPlayerHuman);
-            if (whitePlayerHuman && blackPlayerHuman) {
+            if (whitePlayerHuman && blackPlayerHuman)
+            {
                 boardUI.RotateView(board.whiteToMove && whitePlayerHuman || !blackPlayerHuman);
-            } else {
+            }
+            else
+            {
                 boardUI.RotateViewAndCamera(whitePlayerHuman);
             }
 
-            if((board.whiteToMove && !whitePlayerHuman) || (!board.whiteToMove && !blackPlayerHuman))
+            if ((board.whiteToMove && !whitePlayerHuman) || (!board.whiteToMove && !blackPlayerHuman))
             {
                 bot.ChooseMove(true);
             }
