@@ -161,10 +161,7 @@ namespace Chess.AI
             if (timer.IsRunning)
             {
                 timer.Stop();
-<<<<<<< HEAD
-=======
                 Debug.Log("Lookups: " + lookups);
->>>>>>> origin/ui
                 Debug.Log("Best move: " + Move.MoveString(bestMoveInSearch) + '\n' + "Evaluation: " + (float)bestEvalInSearch / 100 + '\n' + "Time taken: " + timer.Elapsed + '\n' + "Depth: " + searchDepth);
             }
 
