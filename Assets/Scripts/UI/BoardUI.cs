@@ -180,7 +180,7 @@ namespace Chess.UI
         {
             Camera camera = Camera.main;
             Quaternion rotation = new Quaternion(0, 0, (white) ? 0 : 180, 0);
-            camera.transform.rotation = rotation;
+            // camera.transform.rotation = rotation;
 
             foreach (GameObject piece in whitePieces)
             {
@@ -190,6 +190,15 @@ namespace Chess.UI
             {
                 piece.transform.rotation = rotation;
             }
+        }
+
+        public void RotateViewAndCamera(bool white)
+        {
+            Camera camera = Camera.main;
+            Quaternion rotation = new Quaternion(0, 0, (white) ? 0 : 180, 0);
+            camera.transform.rotation = rotation;
+
+            RotateView(white);
         }
     }
 }

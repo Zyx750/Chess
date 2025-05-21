@@ -17,6 +17,8 @@ namespace Chess.Game
         private static bool nextWhitePlayerHuman = true;
         private static bool nextBlackPlayerHuman = false;
 
+        public static float nextAiTimeout = 5;
+
         ChessAI bot;
 
         Stack<Move> moveHistory;
@@ -32,8 +34,7 @@ namespace Chess.Game
             whitePlayerHuman = nextWhitePlayerHuman;
             blackPlayerHuman = nextBlackPlayerHuman;
 
-            board = new Board("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
-            //board = new Board("2b1k3/4b3/5R2/1P2P1p1/4n1Pp/3np2P/8/4K3 w - - 0 1");
+            board = new Board();
             generator = new MoveGenerator();
             moveHistory = new Stack<Move>();
 
@@ -44,7 +45,7 @@ namespace Chess.Game
             if (!whitePlayerHuman || !blackPlayerHuman)
             {
                 bot = gameObject.AddComponent(typeof(ChessAI)) as ChessAI;
-                bot.Init(board, MakeMove);
+                bot.Init(board, MakeMove, (int)(nextAiTimeout * 1000));
             }
 
             List<Move> moves = generator.GenerateMoves(board);
@@ -80,7 +81,14 @@ namespace Chess.Game
         {
             boardUI.GetPossibleMoves(moves);
             boardUI.DisableOrEnableRaycasts(board.whiteToMove && whitePlayerHuman, !board.whiteToMove && blackPlayerHuman);
-            //boardUI.RotateView(board.whiteToMove && whitePlayerHuman || !blackPlayerHuman);
+            if (whitePlayerHuman && blackPlayerHuman)
+            {
+                boardUI.RotateView(board.whiteToMove && whitePlayerHuman || !blackPlayerHuman);
+            }
+            else
+            {
+                boardUI.RotateViewAndCamera(whitePlayerHuman);
+            }
 
             if ((board.whiteToMove && !whitePlayerHuman) || (!board.whiteToMove && !blackPlayerHuman))
             {

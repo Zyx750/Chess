@@ -41,7 +41,7 @@ namespace Chess
         public ulong zobristHash = 0;
         public Stack<ulong> hashHistory;
 
-        public Board(string fen)
+        public Board(string fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
         {
             board = new int[64];
 
@@ -62,13 +62,13 @@ namespace Chess
         public void MakeMove(Move move, bool inSearch = false)
         {
             uint oldcastling = currentGameState & 0b1111;
-            currentGameState = 0;   
+            currentGameState = 0;
 
             //Count half-moves for fifty move rule
             if (board[move.Target] != 0 || Piece.Type(board[move.Start]) == Piece.pawn)
             {
                 halfMovesSinceCaptureOrPawnMove = 0;
-                if(!inSearch) hashHistory.Clear();
+                if (!inSearch) hashHistory.Clear();
             }
             else
             {
@@ -143,7 +143,8 @@ namespace Chess
                     MovePiece(rook, move.Target + 1);
                 }
             }
-            else if (oldcastling != 0) {
+            else if (oldcastling != 0)
+            {
                 if (move.Target == whiteKing)
                 {
                     whiteCanCastleKing = false;
@@ -196,7 +197,7 @@ namespace Chess
             if (blackCanCastleKing) castling |= 0b100;
             if (blackCanCastleQueen) castling |= 0b1000;
             currentGameState |= castling;
-            if(castling != oldcastling && !inSearch) hashHistory.Clear();
+            if (castling != oldcastling && !inSearch) hashHistory.Clear();
 
             //Increment total game moves and change player to move
             if (!whiteToMove) fullMoves++;
@@ -215,7 +216,7 @@ namespace Chess
 
         public void UnMakeMove(Move move, bool inSearch = false)
         {
-            if(!inSearch)
+            if (!inSearch)
             {
                 hashHistory.Pop();
             }
@@ -225,7 +226,7 @@ namespace Chess
             int color = (whiteToMove) ? Piece.white : Piece.black;
             if (!whiteToMove) fullMoves--;
 
-            if(move.MoveFlag > 3) //if move was a promotion, undo promotion and move pawn back
+            if (move.MoveFlag > 3) //if move was a promotion, undo promotion and move pawn back
             {
                 board[move.Start] = Piece.pawn | color;
                 AddPiece(move.Start);
@@ -256,7 +257,7 @@ namespace Chess
             }
 
             //move rook if move was a castle
-            if(move.MoveFlag == Move.Flag.castling)
+            if (move.MoveFlag == Move.Flag.castling)
             {
                 if (move.Target > move.Start)
                 {
@@ -283,14 +284,14 @@ namespace Chess
 
             halfMovesSinceCaptureOrPawnMove = (int)((currentGameState & 0b11111110000000000) >> 10);
 
-            if(hashHistory.Count > 0 && !inSearch)
+            if (hashHistory.Count > 0 && !inSearch)
             {
                 zobristHash = hashHistory.Peek();
             }
             else
             {
                 zobristHash = ZobristHash.Hash(this, currentGameState & 0b1111);
-                if(!inSearch) hashHistory.Push(zobristHash);
+                if (!inSearch) hashHistory.Push(zobristHash);
             }
         }
 
@@ -367,7 +368,7 @@ namespace Chess
         void RemovePiece(int index)
         {
             if (board[index] == 0) return;
-            switch(board[index])
+            switch (board[index])
             {
                 case Piece.queen | Piece.white:
                     whiteQueens.Remove(index);
@@ -463,7 +464,7 @@ namespace Chess
                 }
                 else
                 {
-                    int coord = Coord.Combine(7-row, col);
+                    int coord = Coord.Combine(7 - row, col);
                     switch (c)
                     {
                         case 'P':
@@ -553,7 +554,7 @@ namespace Chess
                 halfMovesSinceCaptureOrPawnMove = Convert.ToInt32(fields[4]);
             else halfMovesSinceCaptureOrPawnMove = 0;
 
-            if(fields.Length > 5)
+            if (fields.Length > 5)
                 fullMoves = Convert.ToInt32(fields[5]);
             else fullMoves = 1;
 
@@ -582,9 +583,9 @@ namespace Chess
             string log = "\n";
             for (int row = 0; row < 8; row++)
             {
-                for(int col = 0; col < 8; col++)
+                for (int col = 0; col < 8; col++)
                 {
-                    int index = Coord.Combine(7-row, col);
+                    int index = Coord.Combine(7 - row, col);
                     log += Piece.PieceChar(board[index]);
                 }
                 log += '\n';
