@@ -77,11 +77,18 @@ namespace Chess.AI
                 }
             }
 
+            if (bestMoveInSearch == null)
+            {
+                bestMoveInSearch = generator.GenerateMoves(board)[0];
+            }
+
             SearchComplete();
         }
 
         int Search(int depth, int distance, int alpha, int beta)
         {
+            if (abortSearch) return alpha;
+
             if (distance > 0)
             {
                 if (board.hashHistory.Contains(board.zobristHash))

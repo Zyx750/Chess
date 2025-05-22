@@ -152,8 +152,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   boardUIObject: {fileID: 1738245568}
-  AiTimeMs1: 100
-  AiTimeMs2: 5000
+  AiTimeMs1: 50
+  AiTimeMs2: 100
+  numberOfGames: 50
 --- !u!4 &210204412
 Transform:
   m_ObjectHideFlags: 0

@@ -8,19 +8,20 @@ using UnityEngine;
 
 public class AiTest : MonoBehaviour
 {
-    ChessAI bot;
+    ChessAI bot1;
+    ChessAI bot2;
     BoardUI boardUI;
     public GameObject boardUIObject;
     Board board;
     MoveGenerator generator;
-    int searchTimeWhite = 1000;
-    int searchTimeBlack = 1000;
     public int AiTimeMs1 = 1000;
     public int AiTimeMs2 = 1000;
+    public int numberOfGames = 10;
     int gameResult;
     void Start()
     {
-        bot = gameObject.AddComponent(typeof(ChessAI)) as ChessAI;
+        bot1 = gameObject.AddComponent(typeof(ChessAI)) as ChessAI;
+        bot2 = gameObject.AddComponent(typeof(ChessAI)) as ChessAI;
         generator = new MoveGenerator();
 
         boardUI = boardUIObject.GetComponent<BoardUI>();
@@ -33,7 +34,7 @@ public class AiTest : MonoBehaviour
 
         int Ai1Wins = 0, Ai2Wins = 0, draws = 0;
 
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < numberOfGames; i++)
         {
             int whiteTime = (i % 2 == 0) ? AiTimeMs1 : AiTimeMs2;
             int blackTime = (i % 2 == 0) ? AiTimeMs2 : AiTimeMs1;
@@ -61,11 +62,10 @@ public class AiTest : MonoBehaviour
 
         gameResult = int.MinValue;
 
-        bot.Init(board, MakeMove, whiteAiTimeMs);
-        searchTimeWhite = whiteAiTimeMs;
-        searchTimeBlack = blackAiTimeMs;
+        bot1.Init(board, MakeMove, whiteAiTimeMs);
+        bot2.Init(board, MakeMove, blackAiTimeMs);
 
-        bot.ChooseMove();
+        bot1.ChooseMove();
 
         while (gameResult == int.MinValue)
             yield return null;
@@ -107,13 +107,12 @@ public class AiTest : MonoBehaviour
     {
         if (board.whiteToMove)
         {
-            bot.searchTimeMillis = searchTimeWhite;
+            bot1.ChooseMove();
         }
         else
         {
-            bot.searchTimeMillis = searchTimeBlack;
+            bot2.ChooseMove();
         }
-        bot.ChooseMove();
     }
 
     void DrawBoard()
