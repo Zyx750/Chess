@@ -61,14 +61,18 @@ namespace Chess.AI
 
                 Search(i, 0, -inf, inf);
 
+                if (bestMoveThisIteration != null)
+                {
+                    bestMoveInSearch = bestMoveThisIteration;
+                    bestEvalInSearch = bestEvalThisIteration;
+                }
+
                 if (abortSearch)
                 {
                     break;
                 }
                 else
                 {
-                    bestMoveInSearch = bestMoveThisIteration;
-                    bestEvalInSearch = bestEvalThisIteration;
                     searchDepth = i;
                 }
             }

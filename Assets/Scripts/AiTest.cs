@@ -15,6 +15,8 @@ public class AiTest : MonoBehaviour
     MoveGenerator generator;
     int searchTimeWhite = 1000;
     int searchTimeBlack = 1000;
+    public int AiTimeMs1 = 1000;
+    public int AiTimeMs2 = 1000;
     int gameResult;
     void Start()
     {
@@ -28,22 +30,22 @@ public class AiTest : MonoBehaviour
 
     IEnumerator RunGames()
     {
-        int AiTimeMs1 = 100;
-        int AiTimeMs2 = 1000;
+
         int Ai1Wins = 0, Ai2Wins = 0, draws = 0;
 
         for (int i = 0; i < 10; i++)
         {
             int whiteTime = (i % 2 == 0) ? AiTimeMs1 : AiTimeMs2;
             int blackTime = (i % 2 == 0) ? AiTimeMs2 : AiTimeMs1;
+            Debug.Log($"Game {i + 1}: White AI time: {whiteTime}ms, Black AI time: {blackTime}ms");
             int result = int.MinValue;
 
             yield return StartCoroutine(PlayGameCoroutine(whiteTime, blackTime, r => result = r));
 
-            if (i % 2 == 1) result *= -1;
+            int winner = result * (i % 2 == 0 ? 1 : -1);
 
-            if (result == 1) Ai1Wins++;
-            else if (result == -1) Ai2Wins++;
+            if (winner == 1) Ai1Wins++;
+            else if (winner == -1) Ai2Wins++;
             else draws++;
 
             Debug.Log($"Game {i + 1}: {result}");
