@@ -13,14 +13,12 @@ namespace Chess.AI
         public static readonly int pawnVal = 100;
 
         Board board;
-        MoveGenerator generator;
 
         bool endgame;
 
-        public int Evaluate(Board board, MoveGenerator generator)
+        public int Evaluate(Board board)
         {
             this.board = board;
-            this.generator = generator;
             if (board.draw) return 0;
 
             int eval = 0;
@@ -29,7 +27,7 @@ namespace Chess.AI
             int whitePieces = CountMaterial(true);
             int blackPieces = CountMaterial(false);
             eval += whitePieces - blackPieces;
-            if(whitePieces < 1600 && blackPieces < 1600) endgame = true;
+            if (whitePieces < 1600 && blackPieces < 1600) endgame = true;
 
             int whitePiecePosition = AddPieceSquareTableValues(true);
             int blackPiecePosition = AddPieceSquareTableValues(false);
@@ -68,7 +66,7 @@ namespace Chess.AI
             List<int> pawns = (white) ? board.whitePawns : board.blackPawns;
             int king = (white) ? board.whiteKing : board.blackKing;
 
-            foreach(int piece in queens)
+            foreach (int piece in queens)
             {
                 sum += PieceSquareTables.ReadFromTable(PieceSquareTables.queenTable, piece, white);
             }
@@ -89,7 +87,7 @@ namespace Chess.AI
                 sum += PieceSquareTables.ReadFromTable(PieceSquareTables.queenTable, piece, white);
             }
 
-            if(endgame) sum += PieceSquareTables.ReadFromTable(PieceSquareTables.kingEndgameTable, king, white);
+            if (endgame) sum += PieceSquareTables.ReadFromTable(PieceSquareTables.kingEndgameTable, king, white);
             else sum += PieceSquareTables.ReadFromTable(PieceSquareTables.kingTable, king, white);
 
             return sum;

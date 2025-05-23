@@ -111,7 +111,7 @@ namespace Chess.AI
 
             if (depth == 0)
             {
-                int eval = evaluation.Evaluate(board, generator);
+                int eval = evaluation.Evaluate(board);
                 return eval;
             }
 
