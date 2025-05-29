@@ -23,6 +23,9 @@ namespace Chess.Game
 
         Stack<Move> moveHistory;
 
+        [SerializeField]
+        private InGameUI inGameUi;
+
         public static void PushNextSettings(bool whitePlayerHuman, bool blackPlayerHuman)
         {
             nextWhitePlayerHuman = whitePlayerHuman;
@@ -100,6 +103,14 @@ namespace Chess.Game
         {
             boardUI.DisableOrEnableRaycasts(false, false);
             Debug.Log("result = " + result);
+
+            StartCoroutine(ShowGameOverAfterDelay(result, 0.5f));
+        }
+
+        System.Collections.IEnumerator ShowGameOverAfterDelay(int result, float delay)
+        {
+            yield return new WaitForSeconds(delay);
+            inGameUi.ShowGameOver(result);
         }
 
         [ContextMenu("Draw Board")]
